@@ -6,24 +6,47 @@ WIDTH = 500
 HEIGHT = 500
 FOOD_SIZE = 10
 DELAY = 100
+
 offsets = {
     "up": (0,20),
     "down": (0, -20),
     "left": (-20, 0),
     "right": (20, 0)
 }
+global score
+score = 0
+
+scoreboard = None
+
+def inti_score():
+    global scoreboard
+    scoreboard = turtle.Turtle()
+    scoreboard.hideturtle() 
+    scoreboard.penup()
+    scoreboard.color("white")            
+    scoreboard.goto(-WIDTH // 2 + 10, HEIGHT // 2 - 40)
+    update_scoreboard()
+
+def update_scoreboard():
+    global score
+    scoreboard.clear()
+    scoreboard.write(f"Score: {score}", font=("Arial", 16, "normal")) 
+
+
 def reset():
     global snake, snake_direction, food_pos, pen
     snake = [[0, 0], [0, 20], [0, 40], [0, 50], [0, 60]]
     snake_direction = "up"
     food_pos = get_random_food_pos()
     food.goto(food_pos)
+    score = 0
+    update_scoreboard()
     # screen.update() Only needed if we are fussed about drawing food before next call to `draw_snake()`.
     move_snake()
 
 
 def move_snake():
-    global snake_direction
+    global snake_direction,score
 
     #  Next position for head of snake.
     new_head = snake[-1].copy()
@@ -65,10 +88,12 @@ def move_snake():
 
 
 def food_collision():
-    global food_pos
+    global food_pos, score
     if get_distance(snake[-1], food_pos) < 20:
         food_pos = get_random_food_pos()
         food.goto(food_pos)
+        score += 10
+        update_scoreboard()
         return True
     return False
 
@@ -136,6 +161,8 @@ screen.onkey(go_up, "Up")
 screen.onkey(go_right, "Right")
 screen.onkey(go_down, "Down")
 screen.onkey(go_left, "Left")
+
+inti_score()
 
 # Let's go
 reset()
